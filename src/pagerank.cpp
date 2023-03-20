@@ -5,7 +5,16 @@
 #include <iomanip>
 
 
-// Function to compute the PageRank of a graph stored as an adjacency list
+/**
+ * Implementation of PageRank in algorithm 4
+ * @author lzj
+ * 
+ * @param graph stored as adjacent list
+ * @param tolerance stop criteria for convergence
+ * @param maxIterations max iterations
+ * 
+ * @return page rank of the graph
+*/
 template<typename T>
 std::vector<T> computePageRank(std::vector<std::vector<int>> &graph, T tolerance, int maxIterations) {
   int n = graph.size();
@@ -52,12 +61,19 @@ std::vector<T> computePageRank(std::vector<std::vector<int>> &graph, T tolerance
   return rank;
 }
 
-// Function to print the PageRank of each node in the graph
+
+/**
+ * Print page rank
+ * @author lzj
+ * 
+ * @param pageRank page rank
+ * @param oss output stream, default to std::cout
+*/
 template<typename T>
-void printPageRank(const std::vector<T> &pageRank) {
-  std::cout << std::fixed << std::setprecision(5);
+void printPageRank(const std::vector<T> &pageRank, std::ostream &oss = std::cout) {
+  oss << std::fixed << std::setprecision(5);
   for (int i = 0; i < pageRank.size(); ++i) {
-    std::cout << "Node " << i << ": " << pageRank[i] << std::endl;
+    oss << "Node " << i << ": " << pageRank[i] << std::endl;
   }
 }
 

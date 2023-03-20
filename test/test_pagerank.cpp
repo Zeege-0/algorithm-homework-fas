@@ -10,7 +10,7 @@ int main() {
       {2}};
 
   double tolerance = 0.0001;
-  int maxIterations = 100;
+  int maxIterations = 5;
 
   auto pageRank = computePageRank(graph, tolerance, maxIterations);
 

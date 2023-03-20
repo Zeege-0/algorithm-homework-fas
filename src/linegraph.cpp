@@ -13,6 +13,7 @@ using Graph = std::vector<std::vector<int>>;
 /**
  * Find line graph's node from origin graph's edge, this is a stupid solution because 
  * std::tuple<int, int> CANNOT be hashed
+ * @author lzj
 */
 struct EdgeToNode{
 private:
@@ -32,6 +33,7 @@ public:
 
 /**
  * Implement the DFS procedure in Algorithm 3
+ * @author lzj
  * 
  * @param node current DFS node in origin graph
  * @param in incoming edge to this node
@@ -61,6 +63,7 @@ static void _createLineGraphDFS(int u, int in, const Graph &G, Graph &LG, const 
 
 /**
  * Implementation of line graph construction in algorithm 3
+ * @author lzj
  * 
  * @param G graph
  * @return line graph L(G)
@@ -84,15 +87,20 @@ Graph createLineGraph(const Graph &G) {
   return LG;
 }
 
-
-// Print the graph stored as an adjacency list
-void printGraph(const Graph &graph) {
+/**
+ * Print the graph stored as an adjacency list
+ * @author lzj
+ * 
+ * @param graph graph
+ * @param oss output stream, default to std::cout
+ */
+void printGraph(const Graph &graph, std::ostream &oss = std::cout) {
   for (int i = 0; i < graph.size(); i++) {
-    std::cout << i << ": ";
+    oss << i << ": ";
     for (int j = 0; j < graph[i].size(); j++) {
-      std::cout << graph[i][j] << " ";
+      oss << graph[i][j] << " ";
     }
-    std::cout << std::endl;
+    oss << "\n";
   }
 }
 
