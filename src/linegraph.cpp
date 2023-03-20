@@ -59,6 +59,12 @@ static void _createLineGraphDFS(int u, int in, const Graph &G, Graph &LG, const 
 }
 
 
+/**
+ * Implementation of line graph construction in algorithm 3
+ * 
+ * @param G graph
+ * @return line graph L(G)
+*/
 Graph createLineGraph(const Graph &G) {
   int edges = 0;
   EdgeToNode edgeToNode;

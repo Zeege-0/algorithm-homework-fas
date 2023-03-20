@@ -12,5 +12,3 @@ message(STATUS "Using ${CMAKE_CXX_COMPILER}")
 add_subdirectory(include)
 add_subdirectory(test)
 
-add_executable(pagerank src/pagerank.cpp)
-target_link_libraries(pagerank PRIVATE argparse)
