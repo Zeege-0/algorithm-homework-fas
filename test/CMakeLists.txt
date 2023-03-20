@@ -1,0 +1,2 @@
+add_executable(test_linegraph test_linegraph.cpp)
+target_include_directories(test_linegraph PRIVATE ${CMAKE_HOME_DIRECTORY})
