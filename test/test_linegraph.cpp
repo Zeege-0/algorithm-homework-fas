@@ -4,10 +4,13 @@
 
 int main() {
   Graph graph = {
-      {1, 2},
-      {0, 2},
-      {0, 1, 3},
-      {2}};
+      {1},
+      {},
+      {3},
+      {0, 1},
+      {},
+      {6},
+      {4}};
   Graph lineGraph = createLineGraph(graph);
 
   printGraph(lineGraph);
