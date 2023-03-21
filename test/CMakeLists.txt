@@ -1,16 +1,9 @@
 
 
-add_executable(test_linegraph test_linegraph.cpp)
-target_include_directories(test_linegraph PRIVATE ${CMAKE_HOME_DIRECTORY})
+file(GLOB LALA_FILES "test_*")
 
-add_executable(test_pagerank test_pagerank.cpp)
-target_include_directories(test_pagerank PRIVATE ${CMAKE_HOME_DIRECTORY})
-
-add_executable(test_scc test_scc.cpp)
-target_include_directories(test_scc PRIVATE ${CMAKE_HOME_DIRECTORY})
-
-add_executable(test_hascycle test_hascycle.cpp)
-target_include_directories(test_hascycle PRIVATE ${CMAKE_HOME_DIRECTORY})
-
-add_executable(test_pgfas test_pgfas.cpp)
-target_include_directories(test_pgfas PRIVATE ${CMAKE_HOME_DIRECTORY})
+foreach(file ${LALA_FILES})
+  get_filename_component(filename ${file} NAME_WE)
+  add_executable(${filename} ${file})
+  target_include_directories(${filename} PRIVATE ${CMAKE_HOME_DIRECTORY})
+endforeach()
