@@ -1,9 +1,9 @@
 
-#include "src/linegraph.cpp"
+#include "src/pgfas.cpp"
 
 
 int main() {
-  Graph graph = {
+  std::vector<std::vector<int>> graph = {
       {1},
       {},
       {3},
@@ -11,7 +11,7 @@ int main() {
       {},
       {6},
       {4}};
-  Graph lineGraph = createLineGraph(graph);
+  auto lineGraph = createLineGraph(graph);
 
   printGraph(lineGraph);
 

@@ -1,5 +1,5 @@
 
-#include "src/scc.cpp"
+#include "src/pgfas.cpp"
 
 int main() {
     std::vector<std::vector<int>> graph = {

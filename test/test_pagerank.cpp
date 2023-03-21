@@ -1,5 +1,5 @@
 
-#include "src/pagerank.cpp"
+#include "src/pgfas.cpp"
 
 // Unit Test
 int main() {
