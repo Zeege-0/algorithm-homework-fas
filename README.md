@@ -8,7 +8,7 @@ This repository is the unofficial implementation of the paper [Computing a Feedb
 This project requires C++17 standard, as specified in `CMakeLists.txt`.
 
 ```
-cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake -B build
 cmake --build build
 ```
 

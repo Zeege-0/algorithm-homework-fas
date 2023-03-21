@@ -31,7 +31,7 @@ public:
   int find(int u, int v) const {
     return mp.at(makeId(u, v));
   }
-  
+
   void add(int u, int v) {
     mp[makeId(u, v)] = mp.size();
   }
@@ -216,4 +216,68 @@ auto computeScc(const std::vector<std::vector<int>> &graph) {
   }
 
   return scc;
+}
+
+
+
+/**
+ * Function to perform DFS traversal of the graph to test if the graph has cycle
+ * 
+ * @param u current vertex to search
+ * @param visited visited vertex
+ * @param parent from where the 
+ * @param graph stored as adjacent list
+ * @return true if has cycle
+ */
+static bool _hasCycleDfs(int u, std::vector<std::vector<int>> &graph, std::unordered_set<int> &parents,
+                         std::unordered_set<int> &visited) {
+  visited.insert(u);
+  for (auto v : graph[u]) {
+    // std::cout << u << ", " << v << "\n";
+    // std::cout << parents << visited;
+    if(!visited.count(v)){
+      parents.insert(v);
+      if (_hasCycleDfs(v, graph, parents, visited)) {
+        // IC();
+        return true;
+      }
+    } else if (parents.count(v)){
+      // IC();
+      return true;
+    }
+  }
+  parents.erase(u);
+  // std::cout << "BT " << parents;
+  return false;
+}
+
+
+/**
+ * Check if a graph has cycle
+ * 
+ * @param graph stored as adjacent list
+ * @return true if has cycle
+*/
+bool hasCycle(std::vector<std::vector<int>> &graph) {
+  std::unordered_set<int> dfsed;
+  for (int i = 0; i < graph.size(); i++) {
+    if (!dfsed.count(i)) {
+      std::unordered_set<int> parents;
+      std::unordered_set<int> visited;
+      if (_hasCycleDfs(i, graph, parents, visited)) {
+        return true;
+      }
+      dfsed.merge(visited);
+    }
+  }
+  return false;
+}
+
+
+
+std::unordered_set<int> pageRankFAS(const std::vector<std::vector<int>> &graph) {
+  std::unordered_set<int> fas;
+
+
+  return fas;
 }

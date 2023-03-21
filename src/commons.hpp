@@ -4,6 +4,21 @@
 #include <vector>
 
 
+#define IC() std::cout << "Line " << __LINE__ << "\n";
+
+
+// print out a container
+template <class Os, class K>
+Os& operator<<(Os& os, const std::unordered_set<K>& v) {
+    os << '[' << v.size() << "] {";
+    bool o{};
+    for (const auto& e : v)
+        os << (o ? ", " : (o = 1, " ")) << e;
+    return os << " }\n";
+}
+
+
+
 /**
  * Print the graph stored as an adjacency list
  * 
