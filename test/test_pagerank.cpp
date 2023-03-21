@@ -3,7 +3,7 @@
 
 // Unit Test
 int main() {
-  std::vector<std::vector<int>> graph = {
+  graph_t graph = {
       {1, 2},
       {0, 2},
       {0, 1, 3},
@@ -12,7 +12,7 @@ int main() {
   double tolerance = 0.0001;
   int maxIterations = 5;
 
-  auto pageRank = computePageRank(graph, tolerance, maxIterations);
+  auto pageRank = computePageRank(graph, maxIterations, tolerance);
 
   printPageRank(pageRank);
 

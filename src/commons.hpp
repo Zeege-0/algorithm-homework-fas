@@ -2,6 +2,11 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
+#include <unordered_set>
+#include <unordered_map>
+
+
+using graph_t = std::vector<std::unordered_set<int>>;
 
 
 #define IC() std::cout << "Line " << __LINE__ << "\n";
@@ -25,14 +30,16 @@ Os& operator<<(Os& os, const std::unordered_set<K>& v) {
  * @param graph graph
  * @param oss output stream, default to std::cout
  */
-void printGraph(const std::vector<std::vector<int>> &graph, std::ostream &oss = std::cout) {
+void printGraph(const graph_t &graph, std::ostream &oss = std::cout) {
+  std::cout << "Graph {"; 
   for (int i = 0; i < graph.size(); i++) {
-    oss << i << ": ";
-    for (int j = 0; j < graph[i].size(); j++) {
-      oss << graph[i][j] << " ";
+    oss << i << ": [";
+    for (auto node: graph[i]) {
+      oss << node << " ";
     }
-    oss << "\n";
+    oss << "], ";
   }
+  std::cout << "}\n";
 }
 
 

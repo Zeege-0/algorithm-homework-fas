@@ -1,7 +1,6 @@
 
 #include "src/pgfas.cpp"
 
-
 int main() {
   graph_t graph = {
       {1},
@@ -11,9 +10,6 @@ int main() {
       {5},
       {6},
       {4}};
-  auto [lineGraph, edgeMap] = createLineGraph(graph);
-
-  printGraph(lineGraph);
-
-  return 0;
+  auto fas = pageRankFAS(graph);
+  printGraph(fas);
 }

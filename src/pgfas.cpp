@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <string>
+#include <algorithm>
 #include <vector>
 #include <stack>
 #include <unordered_set>
@@ -23,6 +24,7 @@
 struct EdgeToNode {
 private:
   std::unordered_map<std::string, int> mp;
+  std::unordered_map<int, std::tuple<int, int>> rmp;
   std::string makeId(int u, int v) const {
     return std::to_string(u) + "-" + std::to_string(v);
   }
@@ -32,8 +34,14 @@ public:
     return mp.at(makeId(u, v));
   }
 
+  std::tuple<int, int> rfind(int i){
+    return rmp.at(i);
+  }
+
   void add(int u, int v) {
-    mp[makeId(u, v)] = mp.size();
+    int id = mp.size();
+    mp[makeId(u, v)] = id;
+    rmp[id] = {u, v};
   }
 };
 
@@ -49,20 +57,20 @@ public:
  * @param edgeToNode maps the "edge" in origin graph to "node" in line graph
  * @param visited visited nodes
 */
-static void _createLineGraphDFS(int u, int in, const std::vector<std::vector<int>> &G,
-                                std::vector<std::vector<int>> &LG, const EdgeToNode &edgeToNode,
+static void _createLineGraphDFS(int u, int in, const graph_t &G,
+                                graph_t &LG, const EdgeToNode &edgeToNode,
                                 std::unordered_set<int> &visited) {
   visited.insert(u);
   for (auto v : G[u]) {
     auto out = edgeToNode.find(u, v);
     if (in >= 0) {
-      LG[in].push_back(out);
+      LG[in].insert(out);
     }
     if (!visited.count(v)) {
       _createLineGraphDFS(v, out, G, LG, edgeToNode, visited);
     } else {
       for (auto w : G[v]) {
-        LG[out].push_back(edgeToNode.find(v, w));
+        LG[out].insert(edgeToNode.find(v, w));
       }
     }
   }
@@ -73,9 +81,9 @@ static void _createLineGraphDFS(int u, int in, const std::vector<std::vector<int
  * Implementation of line graph construction in algorithm 3
  * 
  * @param G graph
- * @return line graph L(G)
+ * @return tuple of [LG, EdgeMap]
 */
-std::vector<std::vector<int>> createLineGraph(const std::vector<std::vector<int>> &G) {
+auto createLineGraph(const graph_t &G) {
   int edges = 0;
   EdgeToNode edgeToNode;
   for (int u = 0; u < G.size(); ++u) {
@@ -84,14 +92,14 @@ std::vector<std::vector<int>> createLineGraph(const std::vector<std::vector<int>
       edgeToNode.add(u, v);
     }
   }
-  std::vector<std::vector<int>> LG(edges, std::vector<int>());
+  graph_t LG(edges);
   std::unordered_set<int> visited;
   for (int u = 0; u < G.size(); ++u) {
     if (!visited.count(u)) {
       _createLineGraphDFS(u, -1, G, LG, edgeToNode, visited);
     }
   }
-  return LG;
+  return std::make_tuple(LG, edgeToNode);
 }
 
 
@@ -106,7 +114,7 @@ std::vector<std::vector<int>> createLineGraph(const std::vector<std::vector<int>
  * @return page rank of the graph
 */
 template <typename T = float>
-std::vector<T> computePageRank(std::vector<std::vector<int>> &graph, T tolerance, int maxIterations) {
+std::vector<T> computePageRank(graph_t &graph, int maxIterations, T tolerance=0.0001f) {
   int n = graph.size();
   T initialRank = 1.0 / n;
   std::vector<T> rank(n, initialRank);
@@ -127,8 +135,7 @@ std::vector<T> computePageRank(std::vector<std::vector<int>> &graph, T tolerance
     // Compute new rank for each node
     for (int i = 0; i < n; i++) {
       newRank[i] = 0.0;
-      for (int j = 0; j < graph[i].size(); j++) {
-        int neighbor = graph[i][j];
+      for (int neighbor: graph[i]) {
         newRank[i] += rank[neighbor] / outDegree[neighbor];
       }
     }
@@ -165,7 +172,7 @@ std::vector<T> computePageRank(std::vector<std::vector<int>> &graph, T tolerance
  * @param onstack whether the vertex is on stack
  * @param foundat the time at which a vertex was discovered
 */
-static void _tarjan(int u, const std::vector<std::vector<int>> &graph, std::vector<std::vector<int>> &scc,
+static void _tarjan(int u, const graph_t &graph, graph_t &scc,
                     std::vector<int> &low, std::vector<int> &disc, std::stack<int> &stk,
                     std::unordered_set<int> &onstack, int *foundat) {
   disc[u] = *foundat;
@@ -181,12 +188,12 @@ static void _tarjan(int u, const std::vector<std::vector<int>> &graph, std::vect
       low[u] = std::min(low[u], disc[i]);
   }
   if (disc[u] == low[u]) {
-    std::vector<int> scctem;
+    std::unordered_set<int> scctem;
     while (1) {
       int v = stk.top();
       stk.pop();
       onstack.erase(v);
-      scctem.push_back(v);
+      scctem.insert(v);
       if (u == v)
         break;
     }
@@ -201,10 +208,10 @@ static void _tarjan(int u, const std::vector<std::vector<int>> &graph, std::vect
  * @param graph stored as adjacent list
  * @return scc where scc[i] contains all the vertex of the i-th scc
 */
-auto computeScc(const std::vector<std::vector<int>> &graph) {
+auto computeScc(const graph_t &graph) {
   std::vector<int> disc(graph.size(), -1);
   std::vector<int> low(graph.size(), 0);
-  std::vector<std::vector<int>> scc;
+  graph_t scc;
   std::unordered_set<int> onStack;
   std::stack<int> stk;
   int times = 1;
@@ -221,6 +228,27 @@ auto computeScc(const std::vector<std::vector<int>> &graph) {
 
 
 /**
+ * Creates a subgraph from given verteces
+ * 
+ * @param scc verteces
+ * @param graph stored as adjacent list
+ * @param subgraph stored as adjacent list
+*/
+auto createSubgraph(const std::unordered_set<int> &scc, const graph_t &graph){
+  graph_t sub(graph.size());
+  for(int i = 0; i < graph.size(); ++i){
+    if(scc.count(i)){
+      sub[i] = graph[i];
+    } else {
+      sub[i] = {};
+    }
+  }
+  return sub;
+}
+
+
+
+/**
  * Function to perform DFS traversal of the graph to test if the graph has cycle
  * 
  * @param u current vertex to search
@@ -229,7 +257,7 @@ auto computeScc(const std::vector<std::vector<int>> &graph) {
  * @param graph stored as adjacent list
  * @return true if has cycle
  */
-static bool _hasCycleDfs(int u, std::vector<std::vector<int>> &graph, std::unordered_set<int> &parents,
+static bool _hasCycleDfs(int u, const graph_t &graph, std::unordered_set<int> &parents,
                          std::unordered_set<int> &visited) {
   visited.insert(u);
   for (auto v : graph[u]) {
@@ -258,7 +286,7 @@ static bool _hasCycleDfs(int u, std::vector<std::vector<int>> &graph, std::unord
  * @param graph stored as adjacent list
  * @return true if has cycle
 */
-bool hasCycle(std::vector<std::vector<int>> &graph) {
+bool hasCycle(const graph_t &graph) {
   std::unordered_set<int> dfsed;
   for (int i = 0; i < graph.size(); i++) {
     if (!dfsed.count(i)) {
@@ -275,9 +303,26 @@ bool hasCycle(std::vector<std::vector<int>> &graph) {
 
 
 
-std::unordered_set<int> pageRankFAS(const std::vector<std::vector<int>> &graph) {
-  std::unordered_set<int> fas;
-
+/**
+ * Impelement PageRanFAS in Algorithm 5, this is the main entrance of this file
+ * 
+ * @param graph stored as adjacent list, the graph would be modified
+ * @return feedback arc set stored as adjacent list
+*/
+auto pageRankFAS(graph_t &graph) {
+  graph_t fas(graph.size());
+  while(hasCycle(graph)){
+    auto sccs = computeScc(graph);
+    for(const auto &component: sccs){
+      auto subgraph = createSubgraph(component, graph);
+      auto [lineGraph, edgeMap] = createLineGraph(subgraph);
+      auto pr = computePageRank(lineGraph, 5);
+      auto maxidx = std::max_element(pr.begin(), pr.end()) - pr.begin();
+      auto [u, v] = edgeMap.rfind(maxidx);
+      fas[u].insert(v);
+      graph[u].erase(v);
+    }
+  }
 
   return fas;
 }
