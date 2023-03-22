@@ -1,8 +1,10 @@
 /**
- * PageRank Feedback Arc Set
+ * PageRank Feedback Arc Set Algorithm
  * 
  * @author lzj
 */
+
+#pragma once
 
 #include <iostream>
 #include <string>

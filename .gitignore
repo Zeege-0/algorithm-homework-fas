@@ -1,6 +1,9 @@
 # Custom folders
 .vscode/*
 build/*
+out/*
+
+# CMake
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
