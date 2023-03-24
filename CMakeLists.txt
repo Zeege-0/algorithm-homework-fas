@@ -1,6 +1,15 @@
 cmake_minimum_required(VERSION 3.17)
 project(FAS VERSION 0.1.0)
 
+set(CPACK_GENERATOR "TGZ")
+set(CPACK_SOURCE_GENERATOR "TGZ")
+include(CPack)
+include(CTest)
+
+
+make_directory(${CMAKE_HOME_DIRECTORY}/out)
+set(CMAKE_INSTALL_PREFIX ${CMAKE_HOME_DIRECTORY}/out)
+
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug)
 endif()

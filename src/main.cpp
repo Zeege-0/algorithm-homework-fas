@@ -1,20 +1,27 @@
 /**
  * Command Line Interface for This Project
-*/
+ */
 
-
+#include "argparse/argparse.hpp"
 #include "commons.hpp"
 #include "pgfas.cpp"
-#include "argparse.hpp"
-
 
 int main(int argc, char **argv) {
   argparse::ArgumentParser parser("fas", "0.1.0", argparse::default_arguments::help);
 
-  parser.add_argument("filename").help("file containing the graph in (from to) format");
-  parser.add_argument("-a", "--algo").required().choice({"greedy", "sort", "pagerank"}).help("algorithm to use [greedy | sort | pagerank]");
-  parser.add_argument("-o", "--output").required().help("output file path");
-  parser.add_argument("-p", "--print").implicit_value(true).default_value(false).help("print the result fas");
+  parser.add_argument("filename")
+      .help("file containing the graph in (from to) format");
+  parser.add_argument("-a", "--algo")
+      .required()
+      .choice({"greedy", "sort", "pagerank"})
+      .help("algorithm to use [greedy | sort | pagerank]");
+  parser.add_argument("-o", "--output")
+      .required()
+      .help("output file path");
+  parser.add_argument("-p", "--print")
+      .implicit_value(true)
+      .default_value(false)
+      .help("print the result fas");
 
   parser.parse_args_noexcept(argc, argv);
 
@@ -36,8 +43,7 @@ int main(int argc, char **argv) {
 
   std::cout << "[" << algo << "] FAS size: " << getNumEdges(fas) << "\n";
   writeGraph(outname, fas);
-  if(print){
+  if (print) {
     printGraph(fas);
   }
-
 }

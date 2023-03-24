@@ -28,3 +28,8 @@ mkdir out
 The `build/src/fas` executable is compiled from `src/main.cpp`, you can see the usages of APIs there.
 
 
+## Testing
+
+Add your test and name it as `test/test_*.cpp`. Recompile the project `cmake --build build`. The executable target can be found at `build/test/`.
+
+

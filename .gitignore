@@ -2,6 +2,7 @@
 .vscode/*
 build/*
 out/*
+tmp/*
 
 # CMake
 CMakeLists.txt.user
