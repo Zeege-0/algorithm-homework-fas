@@ -1,6 +1,8 @@
 
 #include "src/pgfas.cpp"
 
+using namespace lzj;
+
 int main() {
   graph_t graph = {
       {1},

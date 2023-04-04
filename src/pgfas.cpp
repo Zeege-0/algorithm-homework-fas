@@ -17,14 +17,14 @@
 
 #include "commons.hpp"
 
-
+namespace lzj{
 
 /**
  * Find line graph's node from origin graph's edge, this is a stupid solution because 
  * std::tuple<int, int> CANNOT be hashed
 */
 struct EdgeToNode {
-private:
+// private:
   std::unordered_map<std::string, int> mp;
   std::unordered_map<int, std::tuple<int, int>> rmp;
   std::string makeId(int u, int v) const {
@@ -316,6 +316,9 @@ auto pageRankFAS(graph_t &graph) {
   while(hasCycle(graph)){
     auto sccs = computeScc(graph);
     for(const auto &component: sccs){
+      if(component.size() <= 1){
+        continue;
+      }
       auto subgraph = createSubgraph(component, graph);
       auto [lineGraph, edgeMap] = createLineGraph(subgraph);
       auto pr = computePageRank(lineGraph, 5);
@@ -323,8 +326,11 @@ auto pageRankFAS(graph_t &graph) {
       auto [u, v] = edgeMap.rfind(maxidx);
       fas[u].insert(v);
       graph[u].erase(v);
+      std::cout << "removed " << u << "->" << v << "\n";
     }
   }
 
   return fas;
 }
+
+} // namespace lzj

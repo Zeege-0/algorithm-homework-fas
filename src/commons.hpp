@@ -10,8 +10,9 @@
 
 #define IC() std::cout << "Line " << __LINE__ << "\n";
 
-using graph_t = std::vector<std::unordered_set<int>>;
+namespace lzj{
 
+using graph_t = std::vector<std::unordered_set<int>>;
 
 /**
  * Reads graph from file, the first line is number of verteces, following lines are (u, v) pairs
@@ -113,3 +114,4 @@ void printPageRank(const std::vector<T> &pageRank, std::ostream &oss = std::cout
     oss << "Node " << i << ": " << pageRank[i] << std::endl;
   }
 }
+} // namespace lzj
