@@ -1,15 +1,15 @@
 /**
  * Sorted Feedback Arc Set Algorithm
- * 
+ *
  * @author lkx
-*/
+ */
 
 #include <algorithm>
 #include <bitset>
-#include <unordered_set>
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 namespace lkx {
@@ -170,8 +170,8 @@ public:
     std::vector<std::unordered_set<int>> fasset(n);
 
     sort();
-    printA();
-    std::cout << "-------" << std::endl;
+    // printA();
+    // std::cout << "-------" << std::endl;
 
     // 建立映射关系
     int *varray = new int[n];
@@ -181,15 +181,11 @@ public:
     }
 
     // 检查varray
-    std::cout << "varray: ";
-    for (int i = 0; i < n; i++) {
-      std::cout << varray[i] << " ";
-    }
-    std::cout << std::endl;
-
-    // std::bitset<100> fvs; // 假设有100位，这里应该设置为节点数量，但是bitset只能设置为常数
-    long fas = 0;
-    int self = 0;
+    // std::cout << "varray: ";
+    // for (int i = 0; i < n; i++) {
+    //   std::cout << varray[i] << " ";
+    // }
+    // std::cout << std::endl;
 
     // 遍历图中的n-1个节点
     for (int i = 0; i < n - 1; i++) {
@@ -204,23 +200,17 @@ public:
 
         // self loop
         if (v == edge_dest) {
-          self++;
           continue;
         }
 
         // 检查边是否需要被删除
         if (varray[v] > varray[edge_dest]) {
-        //   fvs.set(v);
-          fas++;
           fasset[v].insert(edge_dest);
-          std::cout << "edge needed to be removed: " << v << "->" << edge_dest << std::endl;
+          std::cout << "removed: " << v << "->" << edge_dest << std::endl;
         }
         node = node->next;
       }
     }
-
-    std::cout << "fas size = " << fas << std::endl;
-    std::cout << "self loop = " << self << std::endl;
 
     return fasset;
   }
@@ -248,7 +238,6 @@ Graph readGraph(const std::string &filename) {
 }
 
 } // namespace lkx
-
 
 #ifdef DO_COMPILE_SORTFAS_MAIN
 int main() {
