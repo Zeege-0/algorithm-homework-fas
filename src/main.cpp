@@ -5,6 +5,7 @@
 #include "argparse/argparse.hpp"
 #include "commons.hpp"
 #include "pgfas.cpp"
+#include "sortfas.cpp"
 
 int main(int argc, char **argv) {
   argparse::ArgumentParser parser("fas", "0.1.0", argparse::default_arguments::help);
@@ -30,20 +31,21 @@ int main(int argc, char **argv) {
   auto outname = parser.get("output");
   bool print = parser.get<bool>("print");
 
-  graph_t fas;
-  graph_t graph = readGraph(filename);
+  lzj::graph_t fas;
 
   if (algo == "greedy") {
     std::cout << "Not implemented\n";
   } else if (algo == "sort") {
-    std::cout << "Not implemented\n";
+    auto graph = lkx::readGraph(filename);
+    fas = graph.computeFAS();
   } else if (algo == "pagerank") {
-    fas = pageRankFAS(graph);
+    auto graph = lzj::readGraph(filename);
+    fas = lzj::pageRankFAS(graph);
   }
 
-  std::cout << "[" << algo << "] FAS size: " << getNumEdges(fas) << "\n";
-  writeGraph(outname, fas);
+  std::cout << "[" << algo << "] FAS size: " << lzj::getNumEdges(fas) << "\n";
+  lzj::writeGraph(outname, fas);
   if (print) {
-    printGraph(fas);
+    lzj::printGraph(fas);
   }
 }

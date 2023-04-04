@@ -1,6 +1,8 @@
 
 #include "src/pgfas.cpp"
 
+using namespace lzj;
+
 // Example usage
 int main() {
     int n = 5;

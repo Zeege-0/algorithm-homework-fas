@@ -17,7 +17,7 @@
 
 #include "commons.hpp"
 
-
+namespace lzj{
 
 /**
  * Find line graph's node from origin graph's edge, this is a stupid solution because 
@@ -332,3 +332,5 @@ auto pageRankFAS(graph_t &graph) {
 
   return fas;
 }
+
+} // namespace lzj

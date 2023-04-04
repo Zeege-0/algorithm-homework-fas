@@ -1,6 +1,8 @@
 
 #include "src/pgfas.cpp"
 
+using namespace lzj;
+
 // Unit Test
 int main() {
   graph_t graph = {
