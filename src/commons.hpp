@@ -1,26 +1,26 @@
 
 #pragma once
 
-#include <iostream>
 #include <fstream>
 #include <iomanip>
-#include <vector>
-#include <unordered_set>
+#include <iostream>
 #include <unordered_map>
+#include <unordered_set>
+#include <vector>
 
 #define IC() std::cout << "Line " << __LINE__ << "\n";
 
-namespace lzj{
+namespace lzj {
 
 using graph_t = std::vector<std::unordered_set<int>>;
 
 /**
  * Reads graph from file, the first line is number of verteces, following lines are (u, v) pairs
  * seperated by blank space
- * 
+ *
  * @param filename filename
  * @return graph stored as adjacent list
-*/
+ */
 graph_t readGraph(const std::string &filename, int numVer) {
   try {
     std::ifstream fin(filename);
@@ -34,7 +34,9 @@ graph_t readGraph(const std::string &filename, int numVer) {
       int comma = line.find(',');
       int u = std::stoi(line.substr(0, comma));
       int v = std::stoi(line.substr(comma + 1));
-      graph[u].insert(v);
+      if (u != v) {
+        graph[u].insert(v);
+      }
     }
     fin.close();
     return graph;
@@ -66,16 +68,14 @@ void writeGraph(const std::string &filename, const graph_t &graph) {
 
 int getNumEdges(const graph_t &graph) {
   int sum = 0;
-  for (const auto &i: graph) {
+  for (const auto &i : graph) {
     sum += i.size();
   }
   return sum;
 }
 
-
 // print out a container
-template <class Os, class K>
-Os &operator<<(Os &os, const std::unordered_set<K> &v) {
+template <class Os, class K> Os &operator<<(Os &os, const std::unordered_set<K> &v) {
   os << '[' << v.size() << "] {";
   bool o{};
   for (const auto &e : v)
@@ -83,10 +83,9 @@ Os &operator<<(Os &os, const std::unordered_set<K> &v) {
   return os << " }\n";
 }
 
-
 /**
  * Print the graph stored as an adjacency list
- * 
+ *
  * @param graph graph
  * @param oss output stream, default to std::cout
  */
@@ -102,15 +101,13 @@ void printGraph(const graph_t &graph, std::ostream &oss = std::cout) {
   std::cout << "}\n";
 }
 
-
 /**
  * Print page rank
- * 
+ *
  * @param pageRank page rank
  * @param oss output stream, default to std::cout
-*/
-template <typename T>
-void printPageRank(const std::vector<T> &pageRank, std::ostream &oss = std::cout) {
+ */
+template <typename T> void printPageRank(const std::vector<T> &pageRank, std::ostream &oss = std::cout) {
   oss << std::fixed << std::setprecision(5);
   for (int i = 0; i < pageRank.size(); ++i) {
     oss << "Node " << i << ": " << pageRank[i] << std::endl;

@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
     std::cout << "Not implemented\n";
   } else if (algo == "sort") {
     auto graph = lkx::readGraph(filename, numNodes);
-    fas = graph.computeFAS();
+    graph.computeFAS();
   } else if (algo == "pagerank") {
     auto graph = lzj::readGraph(filename, numNodes);
     lzj::writeGraph(outname + "graph", graph);

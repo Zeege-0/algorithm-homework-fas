@@ -320,6 +320,7 @@ auto pageRankFAS(graph_t &graph) {
       if(component.size() <= 1){
         continue;
       }
+      std::cout << "scc size: " << component.size() << "\n";
       auto subgraph = createSubgraph(component, graph);
       auto [lineGraph, edgeMap] = createLineGraph(subgraph);
       auto pr = computePageRank(lineGraph, 5);
@@ -328,8 +329,8 @@ auto pageRankFAS(graph_t &graph) {
       fas[u].insert(v);
       graph[u].erase(v);
       std::cout << "removed " << u << "->" << v << "\n";
+      }
     }
-  }
 
   return fas;
 }
