@@ -315,6 +315,7 @@ auto pageRankFAS(graph_t &graph) {
   graph_t fas(graph.size());
   while(hasCycle(graph)){
     auto sccs = computeScc(graph);
+    std::cout << "num scc: " << sccs.size() << "\n";
     for(const auto &component: sccs){
       if(component.size() <= 1){
         continue;

@@ -21,17 +21,19 @@ using graph_t = std::vector<std::unordered_set<int>>;
  * @param filename filename
  * @return graph stored as adjacent list
 */
-graph_t readGraph(const std::string &filename) {
+graph_t readGraph(const std::string &filename, int numVer) {
   try {
     std::ifstream fin(filename);
     if (!fin) {
       std::cout << "Error open " << filename << "\n";
       exit(1);
     }
-    int numVer, u, v;
-    fin >> numVer;
+    std::string line;
     graph_t graph(numVer);
-    while (fin >> u >> v) {
+    while (fin >> line) {
+      int comma = line.find(',');
+      int u = std::stoi(line.substr(0, comma));
+      int v = std::stoi(line.substr(comma + 1));
       graph[u].insert(v);
     }
     fin.close();

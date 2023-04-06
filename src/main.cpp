@@ -12,6 +12,9 @@ int main(int argc, char **argv) {
 
   parser.add_argument("filename")
       .help("file containing the graph in (from to) format");
+  parser.add_argument("-n", "--vertices")
+      .required()
+      .help("number of vertices in the graph");
   parser.add_argument("-a", "--algo")
       .required()
       .choice({"greedy", "sort", "pagerank"})
@@ -30,16 +33,18 @@ int main(int argc, char **argv) {
   auto algo = parser.get("algo");
   auto outname = parser.get("output");
   bool print = parser.get<bool>("print");
+  int numNodes = std::stoi(parser.get("vertices"));
 
   lzj::graph_t fas;
 
   if (algo == "greedy") {
     std::cout << "Not implemented\n";
   } else if (algo == "sort") {
-    auto graph = lkx::readGraph(filename);
+    auto graph = lkx::readGraph(filename, numNodes);
     fas = graph.computeFAS();
   } else if (algo == "pagerank") {
-    auto graph = lzj::readGraph(filename);
+    auto graph = lzj::readGraph(filename, numNodes);
+    lzj::writeGraph(outname + "graph", graph);
     fas = lzj::pageRankFAS(graph);
   }
 
@@ -48,4 +53,6 @@ int main(int argc, char **argv) {
   if (print) {
     lzj::printGraph(fas);
   }
+
+
 }

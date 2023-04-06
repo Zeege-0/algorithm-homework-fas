@@ -191,6 +191,8 @@ public:
     for (int i = 0; i < n - 1; i++) {
       // i就是节点
       int v = i;
+      std::cout << i << ", ";
+      std::cout.flush();
 
       // 遍历节点的所有出边
       struct Node *node = adj_list[v]; // 节点的邻接链表
@@ -216,17 +218,17 @@ public:
   }
 };
 
-Graph readGraph(const std::string &filename) {
+Graph readGraph(const std::string &filename, int numVer) {
   try {
     std::ifstream fin(filename);
     if (!fin) {
       std::cout << "Error open " << filename << "\n";
       exit(1);
     }
-    int numVer, u, v;
-    fin >> numVer;
+    int u, v;
+    std::string _comma;
     Graph graph(numVer);
-    while (fin >> u >> v) {
+    while (fin >> u >> _comma >> v) {
       graph.add_edge(u, v);
     }
     fin.close();

@@ -5,7 +5,7 @@ English | [中文文档](/README-cn.md)
 
 This repository is the unofficial implementation of the paper [Computing a Feedback Arc Set Using PageRank](https://doi.org/10.1007/978-3-031-22203-0_1), which is the homework for DCS5172@SYSU: Advanced Algorithm Design and Analysis (Spring 2023).
 
-# Highlights
+## Highlights
 
 - Requires C++ STL only. No additional dependency is needed.
 - Implemented in modern C++17 with flexibility.
