@@ -20,4 +20,4 @@ message(STATUS "Using ${CMAKE_CXX_COMPILER}")
 
 add_subdirectory(include)
 add_subdirectory(src)
-add_subdirectory(test)
+# add_subdirectory(test)

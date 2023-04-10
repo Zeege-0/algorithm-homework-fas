@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <queue>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -13,6 +14,27 @@
 namespace lzj {
 
 using graph_t = std::vector<std::unordered_set<int>>;
+
+template <typename T> std::vector<T> topk(const std::vector<T> &vec, int k) {
+  std::priority_queue<int, std::vector<int>, std::greater<T>> pq;
+  for (int i = 0; i < k; ++i) {
+    pq.push(i);
+  }
+  for (int i = k; i < vec.size(); ++i) {
+    if (vec[i] > vec[pq.top()]) {
+      pq.pop();
+      pq.push(i);
+    }
+  }
+  std::vector<T> ret;
+  ret.reserve(pq.size());
+  while (!pq.empty()) {
+    auto x = pq.top();
+    pq.pop();
+    ret.push_back(x);
+  }
+  return ret;
+}
 
 /**
  * Reads graph from file, the first line is number of verteces, following lines are (u, v) pairs
@@ -54,10 +76,10 @@ void writeGraph(const std::string &filename, const graph_t &graph) {
       std::cout << "Error open " << filename << "\n";
       exit(1);
     }
-    fout << graph.size() << "\n";
+    // fout << graph.size() << "\n";
     for (int i = 0; i < graph.size(); ++i) {
       for (int j : graph[i]) {
-        fout << i << " " << j << "\n";
+        fout << i << "," << j << "\n";
       }
     }
   } catch (std::exception &e) {

@@ -163,7 +163,8 @@ public:
     /* 
     * 计算FAS的大小
     */
-    long computeFAS(){
+    auto computeFAS(){
+        std::vector<std::unordered_set<int>> fasset(n);
         sort(); 
         printA();
         cout<<"-------"<<endl;
@@ -207,6 +208,7 @@ public:
                 if (varray[v] > varray[edge_dest]){
                     // fvs.set(v);
                     fas++;
+                    fasset[v].insert(edge_dest);
                     cout<<"edge needed to be removed: "<<v<<"->"<<edge_dest<<endl;
                 }
                 node = node->next;
@@ -217,7 +219,7 @@ public:
         cout<<"fas size = "<<fas<<endl;
         cout<<"self loop = "<<self<<endl;
 
-        return fas;
+        return fasset;
     }
 };
 
