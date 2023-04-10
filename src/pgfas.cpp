@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "commons.hpp"
+#include "indicators/indicators.hpp"
 
 namespace lzj {
 
@@ -136,8 +137,8 @@ std::vector<T> computePageRank(graph_t &graph, int maxIterations, T tolerance = 
 
     // pass score to neighbors
     std::fill(rank.begin(), rank.end(), 0.0);
-    for(int i = 0; i < n; ++i){
-      for(int neighbor: graph[i]){
+    for (int i = 0; i < n; ++i) {
+      for (int neighbor : graph[i]) {
         rank[neighbor] += rankDivOutDegree[i];
       }
     }
@@ -239,8 +240,8 @@ auto createSubgraph(graph_t &sub, const std::unordered_set<int> &scc, const grap
   for (int i = 0; i < graph.size(); ++i) {
     if (scc.count(i)) {
       sub[i].clear();
-      for(auto node: graph[i]){
-        if(scc.count(node)){
+      for (auto node : graph[i]) {
+        if (scc.count(node)) {
           sub[i].insert(node);
         }
       }
@@ -327,15 +328,23 @@ void preprocess(graph_t &graph, graph_t &fas) {
 auto pageRankFAS(graph_t &graph) {
   graph_t fas(graph.size());
   graph_t subgraph(graph.size());
-  // preprocess(graph, fas);
-  // int sum = 0;
-  // for(const auto &edge: fas){
-  //   sum += edge.size();
-  // }
-  // std::cout << sum << "\n";
-  // exit(1);
+  indicators::ProgressBar bar{
+      indicators::option::BarWidth{50},
+      indicators::option::Start{" ["},
+      // indicators::option::Fill{"█"},
+      // indicators::option::Lead{"█"},
+      // indicators::option::Remainder{"-"},
+      indicators::option::End{"]"},
+      indicators::option::PrefixText{"0 / 0 SCCs"},
+      // indicators::option::ForegroundColor{indicators::Color::yellow},
+      indicators::option::ShowElapsedTime{true},
+      indicators::option::ShowRemainingTime{true},
+      indicators::option::FontStyles{std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
   while (hasCycle(graph)) {
     auto sccs = computeScc(graph);
+    bar.set_progress(100. * sccs.size() / graph.size());
+    bar.set_option(
+        indicators::option::PrefixText{std::to_string(sccs.size()) + " / " + std::to_string(graph.size()) + " SCCs"});
     // std::cout << "=================================\nnum scc: " << sccs.size() << "\n";
     for (const auto &component : sccs) {
       if (component.size() <= 1) {
@@ -352,7 +361,7 @@ auto pageRankFAS(graph_t &graph) {
       auto [lineGraph, edgeMap] = createLineGraph(subgraph);
       auto pr = computePageRank(lineGraph, 5);
       int kForTopk = 1;
-      if(component.size() > 1000){
+      if (component.size() > 1000) {
         kForTopk = 10;
       }
       auto maxids = topk(pr, kForTopk);
@@ -364,6 +373,7 @@ auto pageRankFAS(graph_t &graph) {
       }
     }
   }
+  bar.set_progress(100);
 
   return fas;
 }

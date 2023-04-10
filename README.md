@@ -28,7 +28,7 @@ cmake --build build --target package
 
 ## Usage
 
-After success compilation, a CLI executable can be found at `build/src/fas`, which is the main entrance of the project. Here is an example to run it on the data in `data/simple.txt`. See `build/src/fas --help` for detailed usage.
+Upon success compilation, a CLI executable can be found at `build/src/fas`, which is the main entrance of the project. Here is an example to run it on the data in `data/simple.txt`. See `build/src/fas --help` for detailed usage.
 
 ```bash
 mkdir out

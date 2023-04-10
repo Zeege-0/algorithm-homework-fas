@@ -166,8 +166,8 @@ public:
     auto computeFAS(){
         std::vector<std::unordered_set<int>> fasset(n);
         sort(); 
-        printA();
-        cout<<"-------"<<endl;
+        // printA();
+        // cout<<"-------"<<endl;
         
         //建立映射关系
         int* varray = new int[n];
@@ -177,11 +177,11 @@ public:
         }
         
         // 检查varray
-        cout<<"varray: ";
-        for(int i =0;i<n;i++){
-            cout<<varray[i]<<" ";
-        }
-        cout<<endl;
+        // cout<<"varray: ";
+        // for(int i =0;i<n;i++){
+        //     cout<<varray[i]<<" ";
+        // }
+        // cout<<endl;
 
         // bitset<100> fvs; //假设有100位，这里应该设置为节点数量，但是bitset只能设置为常数
         long fas = 0;
@@ -209,15 +209,15 @@ public:
                     // fvs.set(v);
                     fas++;
                     fasset[v].insert(edge_dest);
-                    cout<<"edge needed to be removed: "<<v<<"->"<<edge_dest<<endl;
+                    // cout<<"edge needed to be removed: "<<v<<"->"<<edge_dest<<endl;
                 }
                 node = node->next;
 
             }
         }
 
-        cout<<"fas size = "<<fas<<endl;
-        cout<<"self loop = "<<self<<endl;
+        // cout<<"fas size = "<<fas<<endl;
+        // cout<<"self loop = "<<self<<endl;
 
         return fasset;
     }

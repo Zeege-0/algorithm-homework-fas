@@ -2,10 +2,14 @@
  * Command Line Interface for This Project
  */
 
+#include <chrono>
+
 #include "argparse/argparse.hpp"
 #include "commons.hpp"
 #include "pgfas.cpp"
 #include "sortfas.cpp"
+
+namespace chrono = std::chrono;
 
 int main(int argc, char **argv) {
   argparse::ArgumentParser parser("fas", "0.1.0", argparse::default_arguments::help);
@@ -35,7 +39,14 @@ int main(int argc, char **argv) {
   bool print = parser.get<bool>("print");
   int numNodes = std::stoi(parser.get("vertices"));
 
+  if((numNodes > 100) && print){
+    std::cout << "# nodes > 100, graph will not print to stdout";
+  }
+
   lzj::graph_t fas;
+
+  auto end_timer = chrono::high_resolution_clock::now();
+  auto start_timer = chrono::high_resolution_clock::now();
 
   if (algo == "greedy") {
     std::cout << "Not implemented\n";
@@ -44,11 +55,14 @@ int main(int argc, char **argv) {
     fas = graph.computeFAS();
   } else if (algo == "pagerank") {
     auto graph = lzj::readGraph(filename, numNodes);
-    lzj::writeGraph(outname + ".graph", graph);
     fas = lzj::pageRankFAS(graph);
   }
 
+  end_timer = chrono::high_resolution_clock::now();
+  auto duration_ms = chrono::duration_cast<chrono::microseconds>(end_timer - start_timer).count() / 1000;
+
   std::cout << "[" << algo << "] FAS size: " << lzj::getNumEdges(fas) << "\n";
+  std::cout << "[" << algo << "] elapsed in " << duration_ms << " ms\n";
   lzj::writeGraph(outname, fas);
   if (print) {
     lzj::printGraph(fas);
