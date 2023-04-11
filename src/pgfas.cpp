@@ -331,12 +331,8 @@ auto pageRankFAS(graph_t &graph) {
   indicators::ProgressBar bar{
       indicators::option::BarWidth{50},
       indicators::option::Start{" ["},
-      // indicators::option::Fill{"█"},
-      // indicators::option::Lead{"█"},
-      // indicators::option::Remainder{"-"},
       indicators::option::End{"]"},
       indicators::option::PrefixText{"0 / 0 SCCs"},
-      // indicators::option::ForegroundColor{indicators::Color::yellow},
       indicators::option::ShowElapsedTime{true},
       indicators::option::ShowRemainingTime{true},
       indicators::option::FontStyles{std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
@@ -362,7 +358,7 @@ auto pageRankFAS(graph_t &graph) {
       auto pr = computePageRank(lineGraph, 5);
       int kForTopk = 1;
       if (component.size() > 1000) {
-        kForTopk = 10;
+        kForTopk = 50;
       }
       auto maxids = topk(pr, kForTopk);
       for (auto id : maxids) {
