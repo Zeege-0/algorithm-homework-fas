@@ -221,6 +221,7 @@ public:
         node = node->next;
       }
     }
+    std::cout << "\n";
 
     // cout<<"fas size = "<<fas<<endl;
     // cout<<"self loop = "<<self<<endl;
@@ -242,7 +243,9 @@ Graph readGraph(const std::string &filename, int numVer) {
       int comma = line.find(',');
       int u = std::stoi(line.substr(0, comma));
       int v = std::stoi(line.substr(comma + 1));
-      graph.add_edge(u, v);
+      if (u != v) {
+        graph.add_edge(u, v);
+      }
     }
     fin.close();
     return graph;

@@ -8,6 +8,7 @@
 #include "commons.hpp"
 #include "pgfas.cpp"
 #include "sortfas.cpp"
+#include "greedyfas.cpp"
 
 namespace chrono = std::chrono;
 
@@ -21,7 +22,7 @@ int main(int argc, char **argv) {
       .help("number of vertices in the graph");
   parser.add_argument("-a", "--algo")
       .required()
-      .choice({"greedy", "sort", "pagerank"})
+      .choice({"_", "greedy", "sort", "pagerank"})
       .help("algorithm to use [greedy | sort | pagerank]");
   parser.add_argument("-o", "--output")
       .required()
@@ -56,13 +57,17 @@ int main(int argc, char **argv) {
   auto start_timer = chrono::high_resolution_clock::now();
 
   if (algo == "greedy") {
-    std::cout << "Not implemented\n";
+    auto graph = lzj::readGraph(filename, numNodes);
+    auto la = cjy::greedyfas(graph);
+    for(auto i: la){
+      std::cout << i << ",";
+    }
   } else if (algo == "sort") {
     auto graph = lkx::readGraph(filename, numNodes);
     fas = graph.computeFAS();
   } else if (algo == "pagerank") {
     auto graph = lzj::readGraph(filename, numNodes);
-    outname = outname.substr(0, outname.size() - 4) + "." + std::to_string(skipK) + ".txt";
+    outname = outname.substr(0, outname.size() - 4) + "-" + std::to_string(skipK) + ".txt";
     fas = lzj::pageRankFAS(graph, skipK);
   }
 

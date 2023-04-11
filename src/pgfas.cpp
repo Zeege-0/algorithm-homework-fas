@@ -109,8 +109,6 @@ std::vector<T> computePageRank(graph_t &graph, int maxIterations, T tolerance = 
   int n = graph.size();
   T initialRank = 1.0 / n;
   std::vector<T> rank(n, initialRank);
-  // std::vector<T> rank1(n, initialRank);
-  // std::vector<T> ranks[2] = {rank0, rank1};
   std::vector<int> outDegree(n, 0);
   std::vector<T> rankDivOutDegree(n);
 
@@ -123,10 +121,6 @@ std::vector<T> computePageRank(graph_t &graph, int maxIterations, T tolerance = 
 
   // Iterate until convergence or maximum iterations
   for (int iter = 0; iter < maxIterations; iter++) {
-    // auto &&rank = ranks[iter & 1];
-    // auto &&newRank = ranks[(iter & 1) ^ 1];
-
-    // compute rank / degree
     for (int i = 0; i < n; ++i) {
       if (outDegree[i] != 0) {
         rankDivOutDegree[i] = rank[i] / outDegree[i];
@@ -142,25 +136,7 @@ std::vector<T> computePageRank(graph_t &graph, int maxIterations, T tolerance = 
         rank[neighbor] += rankDivOutDegree[i];
       }
     }
-
-    // for(int i = 0; i < n; ++i){
-    //   std::cout << rank[i] << ", ";
-    // }
-    // std::cout << "\n";
-
-    // Compute new rank for each node
-    // for (int i = 0; i < n; i++) {
-    //   newRank[i] = 0.0;
-    //   for (int neighbor : graph[i]) {
-    //     if (outDegree[neighbor] != 0) {
-    //       newRank[i] += rank[neighbor] / outDegree[neighbor];
-    //     }
-    //     // std::cout << newRank[i] << ", ";
-    //   }
-    // }
-    // std::cout << "\n";
   }
-  // exit(1);
 
   return rank;
 }
@@ -265,21 +241,16 @@ static bool _hasCycleDfs(int u, const graph_t &graph, std::unordered_set<int> &p
                          std::unordered_set<int> &visited) {
   visited.insert(u);
   for (auto v : graph[u]) {
-    // std::cout << u << ", " << v << "\n";
-    // std::cout << parents << visited;
     if (!visited.count(v)) {
       parents.insert(v);
       if (_hasCycleDfs(v, graph, parents, visited)) {
-        // IC();
         return true;
       }
     } else if (parents.count(v)) {
-      // IC();
       return true;
     }
   }
   parents.erase(u);
-  // std::cout << "BT " << parents;
   return false;
 }
 
@@ -357,9 +328,7 @@ auto pageRankFAS(graph_t &graph, int skipK = 10) {
       auto [lineGraph, edgeMap] = createLineGraph(subgraph);
       auto pr = computePageRank(lineGraph, 5);
       int kForTopk = 1;
-      if (component.size() > 1000) {
-        kForTopk = skipK;
-      }
+      kForTopk = (component.size() / 1000) * skipK + 1;
       auto maxids = topk(pr, kForTopk);
       for (auto id : maxids) {
         auto [u, v] = edgeMap.rfind(id);
@@ -370,6 +339,7 @@ auto pageRankFAS(graph_t &graph, int skipK = 10) {
     }
   }
   bar.set_progress(100);
+  bar.set_option(indicators::option::PrefixText{std::to_string(graph.size()) + " / " + std::to_string(graph.size()) + " SCCs"});
 
   return fas;
 }
