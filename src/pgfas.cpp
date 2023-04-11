@@ -325,7 +325,7 @@ void preprocess(graph_t &graph, graph_t &fas) {
  * @param graph stored as adjacent list, the graph would be modified
  * @return feedback arc set stored as adjacent list
  */
-auto pageRankFAS(graph_t &graph) {
+auto pageRankFAS(graph_t &graph, int skipK = 10) {
   graph_t fas(graph.size());
   graph_t subgraph(graph.size());
   indicators::ProgressBar bar{
@@ -358,7 +358,7 @@ auto pageRankFAS(graph_t &graph) {
       auto pr = computePageRank(lineGraph, 5);
       int kForTopk = 1;
       if (component.size() > 1000) {
-        kForTopk = 50;
+        kForTopk = skipK;
       }
       auto maxids = topk(pr, kForTopk);
       for (auto id : maxids) {

@@ -179,8 +179,8 @@ public:
     // }
     std::cout << std::endl;
 
-    long fas = 0;
-    int self = 0;
+    // long fas = 0;
+    // int self = 0;
 
     indicators::ProgressBar bar{
         indicators::option::BarWidth{50},
@@ -208,13 +208,13 @@ public:
 
         // self loop
         if (v == edge_dest) {
-          self++;
+          // self++;
           continue;
         }
 
         // 检查边是否需要被删除
         if (varray[v] > varray[edge_dest]) {
-          fas++;
+          // fas++;
           fasset[v].insert(edge_dest);
           // std::cout << "edge needed to be removed: " << v << "->" << edge_dest << std::endl;
         }

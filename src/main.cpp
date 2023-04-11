@@ -26,6 +26,8 @@ int main(int argc, char **argv) {
   parser.add_argument("-o", "--output")
       .required()
       .help("output file path");
+  parser.add_argument("-s", "--skip")
+      .help("skip factor for pagerank");
   parser.add_argument("-p", "--print")
       .implicit_value(true)
       .default_value(false)
@@ -38,6 +40,11 @@ int main(int argc, char **argv) {
   auto outname = parser.get("output");
   bool print = parser.get<bool>("print");
   int numNodes = std::stoi(parser.get("vertices"));
+  int skipK = 10;
+  if(parser.present("skip")){
+    skipK = std::stoi(parser.get("skip"));
+  }
+  
 
   if((numNodes > 100) && print){
     std::cout << "# nodes > 100, graph will not print to stdout";
@@ -55,7 +62,8 @@ int main(int argc, char **argv) {
     fas = graph.computeFAS();
   } else if (algo == "pagerank") {
     auto graph = lzj::readGraph(filename, numNodes);
-    fas = lzj::pageRankFAS(graph);
+    outname = outname.substr(0, outname.size() - 4) + "." + std::to_string(skipK) + ".txt";
+    fas = lzj::pageRankFAS(graph, skipK);
   }
 
   end_timer = chrono::high_resolution_clock::now();

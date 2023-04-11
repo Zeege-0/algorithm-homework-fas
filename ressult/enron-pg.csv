@@ -1,6 +1,4 @@
-[pagerank] FAS size: 30496
-[pagerank] elapsed in 2112232 ms
-
 skip,size,time
+1000,39688,236455
 100,33296,477587
 10,30496,2112232
