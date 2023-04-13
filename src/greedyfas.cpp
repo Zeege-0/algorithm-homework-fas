@@ -1,15 +1,14 @@
-
+#include <fstream>
 #include <iostream>
 #include <vector>
 
 #include "commons.hpp"
-
-using namespace std;
+#include "indicators/indicators.hpp"
 
 namespace cjy {
 
 // Removing the sink affects the out-degree of other nodes
-void removeSink(lzj::graph_t &graph, vector<bool> &eliminated, vector<int> &outdegree, int u) {
+void removeSink(lzj::graph_t &graph, std::vector<bool> &eliminated, std::vector<int> &outdegree, int u) {
   // Find which node is connected to u
   for (int i = 0; i < (int)graph.size(); i++) {
     if (!eliminated[i]) {
@@ -23,7 +22,7 @@ void removeSink(lzj::graph_t &graph, vector<bool> &eliminated, vector<int> &outd
 }
 
 // Removing the source will affect the in-degree of other nodes
-void removeSource(lzj::graph_t &graph, vector<bool> &eliminated, vector<int> &indegree, int u) {
+void removeSource(lzj::graph_t &graph, std::vector<bool> &eliminated, std::vector<int> &indegree, int u) {
   for (int v : graph[u]) {
     if (!eliminated[v]) {
       indegree[v]--;
@@ -31,15 +30,15 @@ void removeSource(lzj::graph_t &graph, vector<bool> &eliminated, vector<int> &in
   }
 }
 
-vector<int> greedyfas(lzj::graph_t &graph) {
+std::vector<int> _greedyfasLA(lzj::graph_t &graph) {
   const int n = graph.size();
 
-  vector<int> s1, s2;
-  vector<int> indegree(n, 0);
-  vector<int> outdegree(n, 0);
+  std::vector<int> s1, s2;
+  std::vector<int> indegree(n, 0);
+  std::vector<int> outdegree(n, 0);
 
   // state of nodes
-  vector<bool> eliminated(graph.size(), false);
+  std::vector<bool> eliminated(graph.size(), false);
   // Number of remaining nodes
   int rest = n;
 
@@ -52,6 +51,14 @@ vector<int> greedyfas(lzj::graph_t &graph) {
   }
 
   // if the graph is not empty
+  indicators::ProgressBar bar{
+      indicators::option::BarWidth{50},
+      indicators::option::Start{" ["},
+      indicators::option::End{"]"},
+      indicators::option::PrefixText{"0 / " + std::to_string(rest)},
+      indicators::option::ShowElapsedTime{true},
+      indicators::option::ShowRemainingTime{true},
+      indicators::option::FontStyles{std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
   while (rest != 0) {
     // sink: out-degree == 0
     for (int u = 0; u < n; u++) {
@@ -59,6 +66,8 @@ vector<int> greedyfas(lzj::graph_t &graph) {
         eliminated[u] = true;
         s2.push_back(u);
         rest--;
+        // bar.set_progress(100 - 100. * rest / n);
+        // bar.set_option(indicators::option::PrefixText(std::to_string(n - rest) + " / " + std::to_string(n)));
         removeSink(graph, eliminated, outdegree, u);
       }
     }
@@ -73,6 +82,8 @@ vector<int> greedyfas(lzj::graph_t &graph) {
         eliminated[u] = true;
         s1.push_back(u);
         rest--;
+        // bar.set_progress(100 - 100. * rest / n);
+        // bar.set_option(indicators::option::PrefixText(std::to_string(n - rest) + " / " + std::to_string(n)));
         removeSource(graph, eliminated, indegree, u);
       }
     }
@@ -93,18 +104,123 @@ vector<int> greedyfas(lzj::graph_t &graph) {
         }
       }
     }
-
     s1.push_back(u_max);
     removeSink(graph, eliminated, outdegree, u_max);
     removeSource(graph, eliminated, indegree, u_max);
     eliminated[u_max] = true;
     rest--;
+    bar.set_progress(100 - 100. * rest / n);
+    bar.set_option(indicators::option::PrefixText(std::to_string(n - rest) + " / " + std::to_string(n)));
   }
 
-  vector<int> s;
+  std::vector<int> s;
   s.insert(s.end(), s1.begin(), s1.end());
   s.insert(s.end(), s2.rbegin(), s2.rend());
 
   return s;
 }
+lzj::graph_t readFromFile(const std::string filename) {
+  std::ifstream in(filename);
+  if (!in) {
+    std::cout << "Error open " << filename << "\n";
+    exit(1);
+  }
+  int num, u, v;
+  in >> num;
+  lzj::graph_t graph(num);
+  while (in >> u >> v) {
+    graph[u].insert(v);
+  }
+  in.close();
+  return graph;
+}
+lzj::graph_t LAtoFAS(const std::vector<int> &la, const lzj::graph_t &graph) {
+  // save the order of nodes in LA
+  std::vector<int> orders(la.size());
+  lzj::graph_t fas(graph.size());
+  for (int i = 0; i < la.size(); i++) {
+    orders[la[i]] = i;
+  }
+  for (int u = 0; u < graph.size(); ++u) {
+    for (auto v : graph[u]) {
+      if (orders[u] > orders[v]) {
+        fas[u].insert(v);
+      }
+    }
+  }
+  return fas;
+}
+
+lzj::graph_t greedyFAS(lzj::graph_t &graph) {
+  auto la = _greedyfasLA(graph);
+  return LAtoFAS(la, graph);
+}
+
+void saveLAtofile(std::vector<int> &la, const std::string &filename) {
+  std::ofstream out(filename);
+  for (int u : la) {
+    out << u << " ";
+  }
+  out.close();
+}
+std::vector<int> readLAFromFile(const std::string &filename) {
+  std::vector<int> la;
+  std::ifstream in(filename);
+  int u;
+  while (in >> u) {
+    la.push_back(u);
+  }
+  in.close();
+  return la;
+}
+void saveFAStofile(std::vector<std::pair<int, int>> &fas, const std::string &filename) {
+  std::ofstream out(filename);
+  for (auto [u, v] : fas) {
+    out << u << " " << v << std::endl;
+  }
+  out.close();
+}
+
 } // namespace cjy
+
+// int main(int argc, char const *argv[])
+// {
+//     lzj::graph_t graph = {
+//         {1},
+//         {0, 2},
+//         {3},
+//         {0, 1}};
+
+//     lzj::graph_t graph2 = {
+//         {1, 2},
+//         {2},
+//         {3},
+//         {4, 5, 6},
+//         {6},
+//         {4, 7},
+//         {0},
+//         {1, 2}};
+//     string filename = "data/test2.txt";
+//     lzj::graph_t graph3 = readFromFile(filename);
+//     std::vector<int> la = _greedyfasLA(graph3);
+//     string la_filename = "data/test2_la.txt";
+//     saveLAtofile(la, la_filename);
+//     std::vector<int> lafromfile = readLAFromFile(la_filename);
+//     std::vector<pair<int, int>> fas3 = LAtoFAS(lafromfile, filename);
+//     saveFAStofile(fas3, "data/test2_fas.txt");
+//     for (auto [u, v] : fas3)
+//     {
+//         cout << u << "->" << v << endl;
+//     }
+
+//     std::vector<int> fas = _greedyfasLA(graph);
+
+//     for (int u : fas)
+//     {
+//         cout << u << " -> ";
+//     }
+
+//     cout << endl;
+
+//     return 0;
+// }

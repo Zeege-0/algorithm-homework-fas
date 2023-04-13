@@ -109,28 +109,26 @@ std::vector<T> computePageRank(graph_t &graph, int maxIterations, T tolerance = 
   int n = graph.size();
   T initialRank = 1.0 / n;
   std::vector<T> rank(n, initialRank);
-  std::vector<int> outDegree(n, 0);
+  std::vector<int> outDegree(n, 1);
   std::vector<T> rankDivOutDegree(n);
 
   // Compute out degree of each node
+#pragma unroll
   for (int i = 0; i < n; i++) {
-    for (int j = 0; j < graph[i].size(); j++) {
-      outDegree[i]++;
-    }
+    outDegree[i] += graph[i].size();
   }
 
   // Iterate until convergence or maximum iterations
+#pragma unroll
   for (int iter = 0; iter < maxIterations; iter++) {
+#pragma unroll
     for (int i = 0; i < n; ++i) {
-      if (outDegree[i] != 0) {
-        rankDivOutDegree[i] = rank[i] / outDegree[i];
-      } else {
-        rankDivOutDegree[i] = rank[i];
-      }
+      rankDivOutDegree[i] = rank[i] / outDegree[i];
     }
 
     // pass score to neighbors
     std::fill(rank.begin(), rank.end(), 0.0);
+#pragma unroll
     for (int i = 0; i < n; ++i) {
       for (int neighbor : graph[i]) {
         rank[neighbor] += rankDivOutDegree[i];
@@ -213,16 +211,12 @@ auto computeScc(const graph_t &graph) {
  * @param subgraph stored as adjacent list
  */
 auto createSubgraph(graph_t &sub, const std::unordered_set<int> &scc, const graph_t &graph) {
-  for (int i = 0; i < graph.size(); ++i) {
-    if (scc.count(i)) {
-      sub[i].clear();
-      for (auto node : graph[i]) {
-        if (scc.count(node)) {
-          sub[i].insert(node);
-        }
+  std::fill(sub.begin(), sub.end(), std::unordered_set<int>());
+  for (auto i : scc) {
+    for (auto node : graph[i]) {
+      if (scc.count(node)) {
+        sub[i].insert(node);
       }
-    } else {
-      sub[i] = {};
     }
   }
   return sub;
@@ -262,6 +256,7 @@ static bool _hasCycleDfs(int u, const graph_t &graph, std::unordered_set<int> &p
  */
 bool hasCycle(const graph_t &graph) {
   std::unordered_set<int> dfsed;
+#pragma unroll
   for (int i = 0; i < graph.size(); i++) {
     if (!dfsed.count(i)) {
       std::unordered_set<int> parents;
@@ -273,21 +268,6 @@ bool hasCycle(const graph_t &graph) {
     }
   }
   return false;
-}
-
-void preprocess(graph_t &graph, graph_t &fas) {
-  for (int u = 0; u < graph.size(); ++u) {
-    std::vector<std::tuple<int, int>> toremove;
-    for (int v : graph[u]) {
-      if (graph[v].count(u)) {
-        toremove.push_back({u, v});
-        fas[u].insert(v);
-      }
-    }
-    for (auto &&[u, v] : toremove) {
-      graph[u].erase(v);
-    }
-  }
 }
 
 /**
@@ -339,7 +319,8 @@ auto pageRankFAS(graph_t &graph, int skipK = 10) {
     }
   }
   bar.set_progress(100);
-  bar.set_option(indicators::option::PrefixText{std::to_string(graph.size()) + " / " + std::to_string(graph.size()) + " SCCs"});
+  bar.set_option(
+      indicators::option::PrefixText{std::to_string(graph.size()) + " / " + std::to_string(graph.size()) + " SCCs"});
 
   return fas;
 }

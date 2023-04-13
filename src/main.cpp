@@ -58,10 +58,7 @@ int main(int argc, char **argv) {
 
   if (algo == "greedy") {
     auto graph = lzj::readGraph(filename, numNodes);
-    auto la = cjy::greedyfas(graph);
-    for(auto i: la){
-      std::cout << i << ",";
-    }
+    fas = cjy::greedyFAS(graph);
   } else if (algo == "sort") {
     auto graph = lkx::readGraph(filename, numNodes);
     fas = graph.computeFAS();
