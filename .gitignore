@@ -1,7 +1,7 @@
 # Custom folders
 .vscode/*
-build/*
-out/*
+build**
+out**
 tmp/*
 
 # CMake

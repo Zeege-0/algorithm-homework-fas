@@ -66,8 +66,8 @@ std::vector<int> _greedyfasLA(lzj::graph_t &graph) {
         eliminated[u] = true;
         s2.push_back(u);
         rest--;
-        // bar.set_progress(100 - 100. * rest / n);
-        // bar.set_option(indicators::option::PrefixText(std::to_string(n - rest) + " / " + std::to_string(n)));
+        bar.set_progress(100 - 100. * rest / n);
+        bar.set_option(indicators::option::PrefixText(std::to_string(n - rest) + " / " + std::to_string(n) + " nodes"));
         removeSink(graph, eliminated, outdegree, u);
       }
     }
@@ -82,8 +82,8 @@ std::vector<int> _greedyfasLA(lzj::graph_t &graph) {
         eliminated[u] = true;
         s1.push_back(u);
         rest--;
-        // bar.set_progress(100 - 100. * rest / n);
-        // bar.set_option(indicators::option::PrefixText(std::to_string(n - rest) + " / " + std::to_string(n)));
+        bar.set_progress(100 - 100. * rest / n);
+        bar.set_option(indicators::option::PrefixText(std::to_string(n - rest) + " / " + std::to_string(n) + " nodes"));
         removeSource(graph, eliminated, indegree, u);
       }
     }
