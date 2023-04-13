@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
 
   auto filename = parser.get("filename");
   auto algo = parser.get("algo");
-  auto outname = parser.get("output");
+  auto outname = parser.get("output") + "-" + algo;
   bool print = parser.get<bool>("print");
   int numNodes = std::stoi(parser.get("vertices"));
   int skipK = 10;
@@ -64,7 +64,7 @@ int main(int argc, char **argv) {
     fas = graph.computeFAS();
   } else if (algo == "pagerank") {
     auto graph = lzj::readGraph(filename, numNodes);
-    outname = outname.substr(0, outname.size() - 4) + "-" + std::to_string(skipK) + ".txt";
+    outname = "-" + std::to_string(skipK);
     fas = lzj::pageRankFAS(graph, skipK);
   }
 
@@ -73,6 +73,7 @@ int main(int argc, char **argv) {
 
   std::cout << "[" << algo << "] FAS size: " << lzj::getNumEdges(fas) << "\n";
   std::cout << "[" << algo << "] elapsed in " << duration_ms << " ms\n";
+  outname += ".txt";
   lzj::writeGraph(outname, fas);
   if (print) {
     lzj::printGraph(fas);

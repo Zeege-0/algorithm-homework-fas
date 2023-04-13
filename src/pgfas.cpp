@@ -292,18 +292,10 @@ auto pageRankFAS(graph_t &graph, int skipK = 10) {
     bar.set_progress(100. * sccs.size() / graph.size());
     bar.set_option(
         indicators::option::PrefixText{std::to_string(sccs.size()) + " / " + std::to_string(graph.size()) + " SCCs"});
-    // std::cout << "=================================\nnum scc: " << sccs.size() << "\n";
     for (const auto &component : sccs) {
       if (component.size() <= 1) {
         continue;
       }
-      // std::cout << "scc size: " << component.size() << "\n";
-      // if (component.size() < 10) {
-      //   for (auto i : component) {
-      //     std::cout << i << ", ";
-      //   }
-      //   std::cout << "\n";
-      // }
       createSubgraph(subgraph, component, graph);
       auto [lineGraph, edgeMap] = createLineGraph(subgraph);
       auto pr = computePageRank(lineGraph, 5);
@@ -314,7 +306,6 @@ auto pageRankFAS(graph_t &graph, int skipK = 10) {
         auto [u, v] = edgeMap.rfind(id);
         fas[u].insert(v);
         graph[u].erase(v);
-        // std::cout << "removed " << u << "->" << v << "\n";
       }
     }
   }

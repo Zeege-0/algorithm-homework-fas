@@ -117,7 +117,21 @@ public:
    * looking for valley, or min value, in sequence to locate swap pos
    */
   void sort() {
+    indicators::ProgressBar bar{
+        indicators::option::BarWidth{50},
+        indicators::option::Start{" ["},
+        indicators::option::End{"]"},
+        indicators::option::PrefixText{"sorting"},
+        indicators::option::ShowPercentage{true},
+        indicators::option::ShowElapsedTime{true},
+        indicators::option::ShowRemainingTime{true},
+        indicators::option::FontStyles{std::vector<indicators::FontStyle>{indicators::FontStyle::bold}},
+        indicators::option::MaxProgress{n}};
+
     for (int i = 0; i < n; i++) {
+
+      bar.tick();
+
       int curr = A[i];
       int val = 0;
       int min = 0;
@@ -163,7 +177,7 @@ public:
     std::vector<std::unordered_set<int>> fasset(n);
     sort();
     // printA();
-    std::cout << "-------" << std::endl;
+    // std::cout << "-------" << std::endl;
 
     // 建立映射关系
     int *varray = new int[n];
@@ -173,11 +187,11 @@ public:
     }
 
     // 检查varray
-    std::cout << "varray: ";
+    // std::cout << "varray: ";
     // for(int i =0;i<n;i++){
     //     cout<<varray[i]<<" ";
     // }
-    std::cout << std::endl;
+    // std::cout << std::endl;
 
     // long fas = 0;
     // int self = 0;
@@ -195,7 +209,7 @@ public:
     for (int i = 0; i < n - 1; i++) {
 
       bar.set_progress(100. * i / (n - 1));
-      bar.set_option(indicators::option::PrefixText{std::to_string(i) + " / " + std::to_string(n - 1) + "nodes"});
+      bar.set_option(indicators::option::PrefixText{std::to_string(i) + " / " + std::to_string(n - 1) + " nodes"});
 
       // i就是节点
       int v = i;
@@ -256,36 +270,3 @@ Graph readGraph(const std::string &filename, int numVer) {
 }
 
 } // namespace lkx
-
-// int main() {
-//     // 从文件中读取边信息并添加到邻接链表图中
-//     ifstream infile("3.txt");
-//     if (!infile) {
-//         cout << "Error opening file!" << endl;
-//         return 0;
-//     }
-
-//     int n, src, dest;
-//     infile >> n; // 读取顶点数
-//     Graph g(n);
-
-//     while (infile >> src >> dest) {
-//         g.add_edge(src, dest);
-//     }
-
-//     infile.close();
-
-//     // 打印邻接链表图
-//     g.print_graph();
-//     cout<<"-------"<<endl;
-
-//     //测试某条有向边的是否存在
-//     // cout<<g.hasDirectedEdge(0,1);
-
-//     //输出fas
-//     cout<<g.computeFAS()<<endl;
-
-//     cout<<endl;
-
-//     return 0;
-// }
