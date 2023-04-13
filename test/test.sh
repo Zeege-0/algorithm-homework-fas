@@ -19,7 +19,13 @@ exit 1
 
 import subprocess
 import os
-from colorama import Fore, Style
+
+has_colorama = False
+try:
+    from colorama import Fore, Style
+    has_colorama = True
+except Exception as e:
+    print("module 'colorama' not installed, will not print color")
 
 
 def main():
@@ -41,10 +47,16 @@ def main():
             if algo == 'pagerank':
                 for kvalue in kvalues:
                     cmd[-1] = str(kvalue)
-                    print(Style.RESET_ALL + Fore.GREEN + ' '.join(cmd) + Style.RESET_ALL)
+                    if has_colorama:
+                        print(Style.RESET_ALL + Fore.GREEN + ' '.join(cmd) + Style.RESET_ALL)
+                    else:
+                        print(' '.join(cmd))
                     subprocess.run(cmd)
             else:
-                print(Style.RESET_ALL + Fore.GREEN + ' '.join(cmd) + Style.RESET_ALL)
+                if has_colorama:
+                    print(Style.RESET_ALL + Fore.GREEN + ' '.join(cmd) + Style.RESET_ALL)
+                else:
+                    print(' '.join(cmd))
                 subprocess.run(cmd)
 
 

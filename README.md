@@ -15,7 +15,7 @@ This repository is the unofficial implementation of the paper [Computing a Feedb
 
 ## Quickstart
 
-The project requires a C++17 compatible compiler. The following command is a quickstart to run all the tests to replicate our report. We have a nice progress bar to indicate the current progress. All the tests takes approximiately
+The project requires a C++17 compatible compiler. The following command is a quickstart to run all the tests to replicate the results in our report. We have a nice progress bar to indicate the current progress. All the tests (except the last one) takes 10 minutes approximiately, the last test is very large and may take 8 minutes.
 
 ```bash
 # Compile the project
@@ -30,7 +30,7 @@ A possible output would be like:
 ![](doc/screenshot.png)
 
 
-Alternatively, if you want to pack the binary into a zip file
+Alternatively, if you want to pack the binary into a zip file:
 
 ```bash
 cmake --build build --target package
