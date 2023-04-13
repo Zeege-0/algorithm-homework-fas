@@ -1,19 +1,13 @@
-/**
- * Sorted Feedback Arc Set Algorithm
- *
- * @author lkx
- */
-
 #include <algorithm>
 #include <bitset>
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <unordered_set>
 #include <vector>
 
-namespace lkx {
+#include "indicators/indicators.hpp"
 
+namespace lkx {
 struct Node {
   int dest;
   struct Node *next;
@@ -68,7 +62,7 @@ public:
   打印图
   */
   void print_graph() {
-    std::cout << "print graph\n";
+    std::cout << "print graph" << std::endl;
     for (int i = 0; i < n; i++) {
       struct Node *node = adj_list[i];
       std::cout << i << ": ";
@@ -123,7 +117,21 @@ public:
    * looking for valley, or min value, in sequence to locate swap pos
    */
   void sort() {
+    indicators::ProgressBar bar{
+        indicators::option::BarWidth{50},
+        indicators::option::Start{" ["},
+        indicators::option::End{"]"},
+        indicators::option::PrefixText{"sorting"},
+        indicators::option::ShowPercentage{true},
+        indicators::option::ShowElapsedTime{true},
+        indicators::option::ShowRemainingTime{true},
+        indicators::option::FontStyles{std::vector<indicators::FontStyle>{indicators::FontStyle::bold}},
+        indicators::option::MaxProgress{n}};
+
     for (int i = 0; i < n; i++) {
+
+      bar.tick();
+
       int curr = A[i];
       int val = 0;
       int min = 0;
@@ -165,10 +173,8 @@ public:
   /*
    * 计算FAS的大小
    */
-  std::vector<std::unordered_set<int>> computeFAS() {
-
+  auto computeFAS() {
     std::vector<std::unordered_set<int>> fasset(n);
-
     sort();
     // printA();
     // std::cout << "-------" << std::endl;
@@ -182,13 +188,29 @@ public:
 
     // 检查varray
     // std::cout << "varray: ";
-    // for (int i = 0; i < n; i++) {
-    //   std::cout << varray[i] << " ";
+    // for(int i =0;i<n;i++){
+    //     cout<<varray[i]<<" ";
     // }
     // std::cout << std::endl;
 
+    // long fas = 0;
+    // int self = 0;
+
+    indicators::ProgressBar bar{
+        indicators::option::BarWidth{50},
+        indicators::option::Start{" ["},
+        indicators::option::End{"]"},
+        indicators::option::PrefixText{"0 / 0 nodes"},
+        indicators::option::ShowElapsedTime{true},
+        indicators::option::ShowRemainingTime{true},
+        indicators::option::FontStyles{std::vector<indicators::FontStyle>{indicators::FontStyle::bold}}};
+
     // 遍历图中的n-1个节点
     for (int i = 0; i < n - 1; i++) {
+
+      bar.set_progress(100. * i / (n - 1));
+      bar.set_option(indicators::option::PrefixText{std::to_string(i) + " / " + std::to_string(n - 1) + " nodes"});
+
       // i就是节点
       int v = i;
 
@@ -200,34 +222,44 @@ public:
 
         // self loop
         if (v == edge_dest) {
+          // self++;
           continue;
         }
 
         // 检查边是否需要被删除
         if (varray[v] > varray[edge_dest]) {
+          // fas++;
           fasset[v].insert(edge_dest);
-          std::cout << "removed: " << v << "->" << edge_dest << std::endl;
+          // std::cout << "edge needed to be removed: " << v << "->" << edge_dest << std::endl;
         }
         node = node->next;
       }
     }
+    std::cout << "\n";
+
+    // cout<<"fas size = "<<fas<<endl;
+    // cout<<"self loop = "<<self<<endl;
 
     return fasset;
   }
 };
 
-Graph readGraph(const std::string &filename) {
+Graph readGraph(const std::string &filename, int numVer) {
   try {
     std::ifstream fin(filename);
     if (!fin) {
       std::cout << "Error open " << filename << "\n";
       exit(1);
     }
-    int numVer, u, v;
-    fin >> numVer;
+    std::string line;
     Graph graph(numVer);
-    while (fin >> u >> v) {
-      graph.add_edge(u, v);
+    while (fin >> line) {
+      int comma = line.find(',');
+      int u = std::stoi(line.substr(0, comma));
+      int v = std::stoi(line.substr(comma + 1));
+      if (u != v) {
+        graph.add_edge(u, v);
+      }
     }
     fin.close();
     return graph;
@@ -238,36 +270,3 @@ Graph readGraph(const std::string &filename) {
 }
 
 } // namespace lkx
-
-#ifdef DO_COMPILE_SORTFAS_MAIN
-int main() {
-  // 从文件中读取边信息并添加到邻接链表图中
-  std::ifstream infile("3.txt");
-  if (!infile) {
-    std::cout << "Error opening file!" << std::endl;
-    return 0;
-  }
-
-  int n, src, dest;
-  infile >> n; // 读取顶点数
-  lkx::Graph g(n);
-
-  while (infile >> src >> dest) {
-    g.add_edge(src, dest);
-  }
-
-  infile.close();
-
-  // 打印邻接链表图
-  g.print_graph();
-  std::cout << "-------\n";
-
-  // 测试某条有向边的是否存在
-  //  cout<<g.hasDirectedEdge(0,1);
-
-  // 输出fas
-  std::cout << g.computeFAS() << "\n";
-
-  return 0;
-}
-#endif
