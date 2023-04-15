@@ -19,18 +19,26 @@ exit 1
 
 import subprocess
 import os
-from colorama import Fore, Style
+
+has_colorama = False
+try:
+    from colorama import Fore, Style
+    has_colorama = True
+except Exception as e:
+    print("module 'colorama' not installed, will not print color")
 
 
 def main():
     basedir = os.path.dirname(os.path.dirname(__file__))
     datadir = os.path.join(basedir, 'data')
     outdir = os.path.join(basedir, 'out')
-    fasbin = os.path.join(basedir, "build/src/fas")
+    builddir = os.path.join(basedir, 'build')
+    fasbin = os.path.join(builddir, "src/fas")
     algos = ['greedy', 'sort', 'pagerank']
     datasets = ['wordassociation-2011.txt', 'enron.txt']
     num_nodes = [10617, 69244]
     kvalues = [100, 50, 25, 10]
+
     for idata in range(len(datasets)):
         for algo in algos:
             cmd = [fasbin, os.path.join(datadir, datasets[idata]),
@@ -41,10 +49,16 @@ def main():
             if algo == 'pagerank':
                 for kvalue in kvalues:
                     cmd[-1] = str(kvalue)
-                    print(Style.RESET_ALL + Fore.GREEN + ' '.join(cmd) + Style.RESET_ALL)
+                    if has_colorama:
+                        print(Style.RESET_ALL + Fore.GREEN + ' '.join(cmd) + Style.RESET_ALL)
+                    else:
+                        print(' '.join(cmd))
                     subprocess.run(cmd)
             else:
-                print(Style.RESET_ALL + Fore.GREEN + ' '.join(cmd) + Style.RESET_ALL)
+                if has_colorama:
+                    print(Style.RESET_ALL + Fore.GREEN + ' '.join(cmd) + Style.RESET_ALL)
+                else:
+                    print(' '.join(cmd))
                 subprocess.run(cmd)
 
 

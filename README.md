@@ -3,6 +3,8 @@
 
 English | [中文文档](/README-cn.md)
 
+助教请看中文文档。
+
 This repository is the unofficial implementation of the paper [Computing a Feedback Arc Set Using PageRank](https://doi.org/10.1007/978-3-031-22203-0_1), which is the homework for DCS5172@SYSU: Advanced Algorithm Design and Analysis (Spring 2023).
 
 ## Highlights
@@ -15,14 +17,14 @@ This repository is the unofficial implementation of the paper [Computing a Feedb
 
 ## Quickstart
 
-The project requires a C++17 compatible compiler. The following command is a quickstart to run all the tests to replicate our report. We have a nice progress bar to indicate the current progress. All the tests takes approximiately
+The project requires a C++17 compatible compiler. The following command is a quickstart to run all the tests to replicate the results in our report. We have a nice progress bar to indicate the current progress. All the tests (except the last one) takes 10 minutes approximiately, the last test is very large and may take 8 minutes.
 
 ```bash
 # Compile the project
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 # Run the tests
-sh ./test/test.sh
+sh ./test.sh
 ```
 
 A possible output would be like:
@@ -30,7 +32,7 @@ A possible output would be like:
 ![](doc/screenshot.png)
 
 
-Alternatively, if you want to pack the binary into a zip file
+Alternatively, if you want to pack the binary into a zip file:
 
 ```bash
 cmake --build build --target package
