@@ -32,11 +32,13 @@ def main():
     basedir = os.path.dirname(os.path.dirname(__file__))
     datadir = os.path.join(basedir, 'data')
     outdir = os.path.join(basedir, 'out')
-    fasbin = os.path.join(basedir, "build/src/fas")
+    builddir = os.path.join(basedir, 'build')
+    fasbin = os.path.join(builddir, "src/fas")
     algos = ['greedy', 'sort', 'pagerank']
     datasets = ['wordassociation-2011.txt', 'enron.txt']
     num_nodes = [10617, 69244]
     kvalues = [100, 50, 25, 10]
+
     for idata in range(len(datasets)):
         for algo in algos:
             cmd = [fasbin, os.path.join(datadir, datasets[idata]),
